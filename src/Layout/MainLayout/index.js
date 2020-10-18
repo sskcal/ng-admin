@@ -1,42 +1,63 @@
 import React, { Component } from 'react'
 import { Layout, Menu, Breadcrumb } from 'antd'
-import {UserOutlined} from '@ant-design/icons'
-import {withRouter} from 'react-router-dom'
+import { UserOutlined } from '@ant-design/icons'
+import { withRouter } from 'react-router-dom'
+import { leftMenu } from '../../config/router'
 import './index.less'
 const { Header, Content, Footer, Sider } = Layout
 const { SubMenu } = Menu
-
+let showBread = {}
 class MainLayout extends Component {
     state = {
-        collapsed: false
+        collapsed: false,
+        bread:{}
     }
     onCollapse = collapsed => {
-        console.log(collapsed)
         this.setState({ collapsed })
     }
-    handelOnSelect = ({key})=>{
+    handelOnSelect = ({ key }) => {
         this.props.history.push(key);
     }
-   
+    componentDidMount() {
+        this.setState({ 
+            bread:showBread
+        });
+    }
+    getMenu = (item) => {
+        return item.map(x => {
+            const { path, title, children, icon,hide,bread } = x
+            if(bread){
+                showBread[path] = bread
+            }
+            
+            if(hide) return
+            if (children) {
+                return <SubMenu key={path} icon={icon} title={title}>{this.getMenu(children)}</SubMenu>
+            } else {
+                return <Menu.Item key={path}>{title}</Menu.Item>
+            }
+        })
+    }
     render() {
         
-         const {path} = this.props.match
+        
+        const { path } = this.props.match
+        
         return (
             <Layout style={{ minHeight: '100vh' }}>
                 <Sider collapsible collapsed={this.state.collapsed} onCollapse={this.onCollapse}>
                     <div className="logo" />
-                    <Menu 
-                    theme="dark" 
-                    mode="inline"
-                    defaultOpenKeys={['/users']}
-                    defaultSelectedKeys={[path]}
-                    onSelect={this.handelOnSelect}
+                    <Menu
+                        theme="dark"
+                        mode="inline"
+                        defaultOpenKeys={['/users']}
+                        defaultSelectedKeys={[path]}
+                        onSelect={this.handelOnSelect}
                     >
-                        <SubMenu key="/users" icon={<UserOutlined />} title="用户模块">
-                            <Menu.Item key="/users/list">用户管理</Menu.Item>
-                            <Menu.Item key="/users/roles">角色管理</Menu.Item>
-                        </SubMenu>
-
+                        
+                        {
+                            this.getMenu(leftMenu)
+                        }
 
                     </Menu>
                 </Sider>
@@ -44,8 +65,12 @@ class MainLayout extends Component {
                     <Header className="site-layout-background" style={{ padding: 0 }} />
                     <Content style={{ margin: '0 16px' }}>
                         <Breadcrumb style={{ margin: '16px 0' }}>
-                            <Breadcrumb.Item>User</Breadcrumb.Item>
-                            <Breadcrumb.Item>Bill</Breadcrumb.Item>
+                        {
+                            
+                                showBread[path].map(x => {
+                                    return <Breadcrumb.Item key={path}>{x}</Breadcrumb.Item>
+                                })
+                       }
                         </Breadcrumb>
                         {this.props.children}
                     </Content>

@@ -1,6 +1,7 @@
-import React from 'react';
+import React,{lazy} from 'react';
 import { Redirect } from 'react-router-dom';
 import MainLayout from '../Layout/MainLayout';
+
 
 //父级
 // title:侧边栏显示的文字
@@ -13,7 +14,7 @@ import MainLayout from '../Layout/MainLayout';
 // icon:图标(组件)
 // path: 组件的路径,
 // layout: Layout组件,
-// component: React.lazy(() => import('../Pages/组件的路径'))
+// component: 要渲染的组件
 // hide: true/false
 
 const leftMenu = [{
@@ -24,41 +25,41 @@ const leftMenu = [{
             title: '角色管理',
             bread: ['用户模块', '角色管理'],
             path: '/users/roles',
-            layout: Main,
-            component: React.lazy(() => import('../Pages/Users/Roles'))
+            layout: MainLayout,
+            component: lazy(()=>import("../Pages/Users/Roles"))
         }, {
             title: '用户管理',
             bread: ['用户模块', '用户列表'],
             path: '/users/list',
-            layout: Main,
-            component: React.lazy(() => import('../Pages/Users/List')),
+            layout: MainLayout,
+            component: lazy(()=>import("../Pages/Users/List")),
         }, {
             hide: true,
             title: '编辑用户',
             bread: ['用户模块', '用户列表', '编辑用户'],
             path: '/users/list/edit/:id',
-            layout: Main,
-            component: React.lazy(() => import('../Pages/Users/List/Edit'))
+            layout: MainLayout,
+            component: lazy(()=>import("../Pages/Users/List/Edit"))
         }
     ]
 }];
 
 //其它页面路由
 const otherRouter = [
-    {
-        title: '首页',
-        path: '/',
-        component: () => <Redirect push to="/login" />
-    },
-    {
-        title: '后台登陆',
-        path: '/login',
-        component: React.lazy(() => import('../Pages/Login'))
-    },{
-        title:'退出登陆',
-        path:'/out_login',
-        component:React.lazy(() => import('../Pages/OutLogin'))
-    }
+    // {
+    //     title: '首页',
+    //     path: '/',
+    //     component: () => <Redirect push to="/login" />
+    // },
+    // {
+    //     title: '后台登陆',
+    //     path: '/login',
+    //     component: React.lazy(() => import('../Pages/Login'))
+    // },{
+    //     title:'退出登陆',
+    //     path:'/out_login',
+    //     component:React.lazy(() => import('../Pages/OutLogin'))
+    // }
 ]
 
-export { leftRouter, otherRouter };
+export { leftMenu, otherRouter };
